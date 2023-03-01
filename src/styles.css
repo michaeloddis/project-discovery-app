@@ -1,1 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 /* You can add global styles to this file, and also import other style files */
+
+html {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+}
+
+body {
+    background-color: #1E1E1E;
+    color: white;
+    font-size: 12px;
+}
+
+.app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-family: arial, sans-serif;
+    table-layout: fixed;
+    width: 100%;
+}
+
+thead {
+    background-color: #1E1E1E;
+    margin: 0;
+    position: sticky;
+    top: 0;
+}
+  
+th {
+    border-bottom: 1px solid #000000;
+    padding: 8px 0px;
+    text-align: left;
+    color: #A1A1AA;
+    height: 48px;
+}
+
+tbody > tr {
+    height: 80px;
+    border: 1px solid #1E1E1E;
+}
+
+tbody > tr:hover {
+    /* background-color: #18181B; */
+    border: 1px solid #27272A;
+    border-radius: 4px;
+}
+
+td:first-child { border-top-left-radius: 10px; }
+td:last-child { border-top-right-radius: 10px; }
+td:first-child { border-bottom-left-radius: 10px; }
+td:last-child { border-bottom-right-radius: 10px; }
+
+.container {
+    border: 1px solid #27272A;
+    height: calc(80px * 7 + 48px);
+    max-width: 1120px !important;
+    overflow: auto;
+}
+
+/* Page Detail Layout */
+
+.page-detail-template_root {  display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(72px, auto) 1fr;
+    grid-auto-columns: 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "Header"
+        "Body"
+        "Footer";
+}
+  
+.page-detail-template_header {
+    grid-area: Header;
+}
+  
+.page-detail-template_footer {
+    grid-area: Footer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+  
+.page-detail-template_body {
+    grid-area: Body;
+}
+  
