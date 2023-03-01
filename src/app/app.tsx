@@ -18,6 +18,7 @@ import {
 import { PageDetailTemplate } from './components/page-detail-template';
 import { motion } from "framer-motion";
 import { IconColumnSort } from './components/icon-column-sort';
+import { Tag } from './components/tag';
   
   const fetchSize = 25
 
@@ -67,7 +68,7 @@ import { IconColumnSort } from './components/icon-column-sort';
         {
             accessorKey: 'dateFound',
             header: 'Date Found',
-            size: 80,
+            size: 120,
             cell: info => info.getValue<Date>().toLocaleString(),
         },
         {
@@ -77,7 +78,7 @@ import { IconColumnSort } from './components/icon-column-sort';
         },
         {
           accessorKey: 'assetsEffected',
-          size: 60,
+          size: 80,
           header: () => <span>Assets Effected</span>
         },
         {
@@ -141,6 +142,7 @@ import { IconColumnSort } from './components/icon-column-sort';
             sorting,
             rowSelection
         },
+        enableRowSelection: true,
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
@@ -161,9 +163,7 @@ import { IconColumnSort } from './components/icon-column-sort';
     const { virtualItems: virtualRows, totalSize } = rowVirtualizer;
     
     const paddingTop = virtualRows.length > 0 ? virtualRows?.[0]?.start || 0 : 0;
-    
-    const paddingBottom = 
-        virtualRows.length > 0
+    const paddingBottom = virtualRows.length > 0
         ? totalSize - (virtualRows?.[virtualRows.length - 1]?.end || 0)
         : 0;
   
@@ -221,8 +221,13 @@ import { IconColumnSort } from './components/icon-column-sort';
         console.log('context', cell.getContext().getValue());
 
         return (
-            <td key={cell.id}>
-                {vulnData.name}
+            <td 
+                key={cell.id}
+                className='flex flex-wrap gap-2 content-center items-center h-[80px]'>
+                <span>{vulnData.name}</span>
+                <Tag variant='standard'>{vulnData.cve}</Tag>
+                <Tag variant='standard'>{vulnData.cwe}</Tag>
+                <Tag variant='standard'>{vulnData.type}</Tag>
             </td>
         );
     };
@@ -237,6 +242,29 @@ import { IconColumnSort } from './components/icon-column-sort';
         );
     };
 
+    const renderRiskCell = (cell: Cell<VulnRecord, unknown>) => {
+        return (
+            <td key={cell.id}>
+                <Tag variant='standard'>{cell.getContext().getValue() as string}</Tag>
+            </td>
+        );
+    };
+
+    const renderStatusCell = (cell: Cell<VulnRecord, unknown>) => {
+        const value = cell.getContext().getValue() as string;
+        
+        let statusLabel = 'Create Jira';
+        if (value === 'open') {
+            statusLabel = 'Open Jira';
+        }
+
+        return (
+            <td key={cell.id}>
+                <Tag variant='standard'>{statusLabel}</Tag>
+            </td>
+        );
+    };
+
     const renderVisibleCells = (row: Row<VulnRecord>) => {
         return (
             row.getVisibleCells().map(cell => {
@@ -244,9 +272,9 @@ import { IconColumnSort } from './components/icon-column-sort';
                 const cellMap: any = {
                     'vulnData': renderVulnDataCell,
                     'assetsEffected': renderCell,
-                    'risk': renderCell,
+                    'risk': renderRiskCell,
                     'dateFound': renderCell,
-                    'status': renderCell
+                    'status': renderStatusCell
                 };
 
                 if ([
@@ -260,23 +288,6 @@ import { IconColumnSort } from './components/icon-column-sort';
                 } else {
                     return renderCell(cell);
                 }
-
-                /*
-                switch (cell?.column?.id) {
-                    case 'vulnData':
-                        return renderVulnDataCell(cell);
-                    case 'assetsEffected':
-                        return renderCell(cell);
-                    case 'risk':
-                        return renderCell(cell);
-                    case 'dateFound':
-                        return renderCell(cell);
-                    case 'status':
-                        return renderCell(cell);
-                    default:
-                        return renderCell(cell);
-                };
-                */
             })
         )
     };
@@ -308,7 +319,8 @@ import { IconColumnSort } from './components/icon-column-sort';
                                         type: 'tween',
                                         duration: 0.1
                                     }}
-                                    className={Object.keys(rowSelection).length ? 'bg-[#18181B]' : ''}>
+                                    // className={Object.keys(rowSelection).length ? 'bg-[#18181B]' : ''}
+                                >
                                     {renderVisibleCells(row)}
                                 </motion.tr>
                             );
