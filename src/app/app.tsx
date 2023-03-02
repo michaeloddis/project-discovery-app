@@ -69,7 +69,7 @@ export function App() {
           accessorKey: 'vulnData',
           header: 'Vulnerability',
           size: 260,
-          cell: info => { console.log(info.getValue()); return info.getValue<VulnData>(); },
+          cell: info => info.getValue<VulnData>(),
         },
         {
             accessorKey: 'dateFound',
@@ -340,11 +340,6 @@ export function App() {
                         {virtualRows.map(virtualRow => {
                             const row = rows[virtualRow.index] as Row<VulnRecord>;
                             const selected = Object.keys(rowSelection).length && rowSelection[row.id];
-
-                            console.log('selected', selected);
-
-                            console.log('row', row);
-                            console.log('rowSelection', rowSelection);
                             
                             return (
                                 <tr
@@ -385,6 +380,7 @@ export function App() {
     }
     
     // Renders the Header content area
+    // <span className='whitespace-nowrap mr-2'>Fetched {flatData.length} of {totalDBRowCount} Rows</span>
     const renderHeaderContent = () => {
         return (
             <div className='flex items-center justify-center flex-nowrap h-[72px] px-8'>
@@ -402,7 +398,6 @@ export function App() {
                         <Badge disabled>20</Badge>
                     </TabItem>
                 </TabBar>
-                <span className='whitespace-nowrap mr-2'>Fetched {flatData.length} of {totalDBRowCount} Rows</span>
                 <FilterButton>Filters <IconFilter /></FilterButton>
             </div>
         )
