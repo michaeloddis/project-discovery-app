@@ -1,8 +1,12 @@
 {
     "cSpell.words": [
         "overscan",
+        "Preauth",
+        "Sophos",
+        "SSRF",
         "tailwindcss",
         "tanstack",
-        "Vuln"
+        "Vuln",
+        "Vulns"
     ]
 }

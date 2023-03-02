@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 
 import {
@@ -11,20 +12,25 @@ import {
     useReactTable,
     Cell
   } from '@tanstack/react-table';
-  import { useInfiniteQuery } from '@tanstack/react-query';
-  import { useVirtual } from 'react-virtual';
-  import { fetchData, VulnRecord, PersonApiResponse, VulnData } from './mockData';
-  import { Checkbox } from './components/checkbox';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { useVirtual } from 'react-virtual';
+import { fetchData, VulnRecord, VulnDataApiResponse, VulnData } from './mockData';
+import { Checkbox } from './components/checkbox';
 import { PageDetailTemplate } from './components/page-detail-template';
-import { motion } from "framer-motion";
-import { IconColumnSort } from './components/icon-column-sort';
+import { IconColumnSort, IconExternalLink, IconFilter, IconGraphFull, IconJira, IconRightArrow } from './components/icons';
 import { Tag } from './components/tag';
+import { Badge } from './components/badge';
+import { capitalizeFirstLetter } from './utils';
+import { TabBar, TabItem } from './components/tabs';
+import { FilterButton } from './components/filter-button';
+import { LinkButton } from './components/link-button';
   
-  const fetchSize = 25
+const fetchSize = 25;
 
-  export function App() {
-    const [rowSelection, setRowSelection] = React.useState({});
+export function App() {
+    const [rowSelection, setRowSelection] = React.useState<any>({});
     const [sorting, setSorting] = React.useState<SortingState>([]);
+    const [viewAllVulns, setViewAllVulns] = React.useState(false);
   
     // Reference to the scrolling element used by logic down below
     const tableContainerRef = React.useRef<HTMLDivElement>(null);
@@ -45,7 +51,7 @@ import { Tag } from './components/tag';
                     />
                 </div>
             ),
-            size: 80,
+            size: 50,
             cell: ({ row }) => (
               <div className="px-[32px]">
                 <Checkbox
@@ -62,28 +68,28 @@ import { Tag } from './components/tag';
         {
           accessorKey: 'vulnData',
           header: 'Vulnerability',
-          size: 250,
+          size: 260,
           cell: info => { console.log(info.getValue()); return info.getValue<VulnData>(); },
         },
         {
             accessorKey: 'dateFound',
             header: 'Date Found',
-            size: 120,
-            cell: info => info.getValue<Date>().toLocaleString(),
+            size: 80,
+            cell: info => info.getValue<Date>().toLocaleString()
         },
         {
           accessorKey: 'risk',
-          size: 60,
+          size: 50,
           header: () => 'Risk'
         },
         {
           accessorKey: 'assetsEffected',
-          size: 80,
+          size: 85,
           header: () => <span>Assets Effected</span>
         },
         {
           accessorKey: 'status',
-          size: 60,
+          size: 114,
           header: 'Status',
         }
       ],
@@ -91,20 +97,25 @@ import { Tag } from './components/tag';
     )
   
     // React-query has an useInfiniteQuery hook just for this situation!
-    const { data, fetchNextPage, isFetching, isLoading } = useInfiniteQuery<PersonApiResponse>(
+    const { data, fetchNextPage, isFetching, isLoading } = useInfiniteQuery<VulnDataApiResponse>(
         ['table-data', sorting], // Adding sorting state as key causes table to reset and fetch from new beginning upon sort
         
         async ({ pageParam = 0 }) => {
-            const start = pageParam * fetchSize
-            const fetchedData = fetchData(start, fetchSize, sorting) //pretend api call
-            return fetchedData
+            const start = pageParam * fetchSize;
+            const end = !viewAllVulns ? 7 : null;
+            console.log('end', end);
+            const fetchedData = fetchData(start, fetchSize, sorting, end); // Pretend api call
+            
+            return fetchedData;
         },
         {
             getNextPageParam: (_lastGroup, groups) => groups.length,
             keepPreviousData: true,
             refetchOnWindowFocus: false,
         }
-      )
+    )
+    
+    console.log('data', data);
   
     // We must flatten the array of arrays from the useInfiniteQuery hook
     const flatData = React.useMemo(() => data?.pages?.flatMap(page => page.data) ?? [], [data]);
@@ -133,7 +144,7 @@ import { Tag } from './components/tag';
     // A check on mount and after a fetch to see if the table is already scrolled to the bottom and immediately needs to fetch more data
     React.useEffect(() => {
         fetchMoreOnBottomReached(tableContainerRef.current)
-    }, [fetchMoreOnBottomReached])
+    }, [fetchMoreOnBottomReached, viewAllVulns])
   
     const table = useReactTable({
         data: flatData,
@@ -153,7 +164,7 @@ import { Tag } from './components/tag';
     // Get the row data
     const { rows } = table.getRowModel();
   
-    //Virtualizing is optional, but might be necessary if we are going to potentially have hundreds or thousands of rows
+    // Virtualizing is optional, but might be necessary if we are going to potentially have hundreds or thousands of rows
     const rowVirtualizer = useVirtual({
         parentRef: tableContainerRef,
         size: rows.length,
@@ -166,10 +177,6 @@ import { Tag } from './components/tag';
     const paddingBottom = virtualRows.length > 0
         ? totalSize - (virtualRows?.[virtualRows.length - 1]?.end || 0)
         : 0;
-  
-    if (isLoading) {
-        return <>Loading...</>;
-    }
 
     const renderTableHeaders = (headerGroup: HeaderGroup<VulnRecord>) => {
         const determineSortDirection = (sorted: string) => {
@@ -183,6 +190,7 @@ import { Tag } from './components/tag';
             headerGroup.headers.map(header => {
                 return (
                     <th
+                        className={`header-${header.id}`}
                         key={header.id}
                         colSpan={header.colSpan}
                         style={{ width: header.getSize() }}
@@ -215,26 +223,8 @@ import { Tag } from './components/tag';
         );
     };
 
-    const renderVulnDataCell = (cell: Cell<VulnRecord, unknown>) => {
-        const vulnData = cell.getContext().getValue() as VulnData;
-                    
-        console.log('context', cell.getContext().getValue());
-
-        return (
-            <td 
-                key={cell.id}
-                className='flex flex-wrap gap-2 content-center items-center h-[80px]'>
-                <span>{vulnData.name}</span>
-                <Tag variant='standard'>{vulnData.cve}</Tag>
-                <Tag variant='standard'>{vulnData.cwe}</Tag>
-                <Tag variant='standard'>{vulnData.type}</Tag>
-            </td>
-        );
-    };
-
+    // Renders the standard cell renderer
     const renderCell = (cell: Cell<VulnRecord, unknown>) => {
-        console.log('Beep', cell.column);
-        
         return (
             <td key={cell.id}>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -242,36 +232,74 @@ import { Tag } from './components/tag';
         );
     };
 
-    const renderRiskCell = (cell: Cell<VulnRecord, unknown>) => {
+    // Vuln data cell renderers
+    const renderVulnDataCell = (cell: Cell<VulnRecord, unknown>) => {
+        const vulnData = cell.getContext().getValue() as VulnData;
+
         return (
-            <td key={cell.id}>
-                <Tag variant='standard'>{cell.getContext().getValue() as string}</Tag>
+            <td 
+                key={cell.id}
+                className='flex flex-wrap gap-2 content-center items-center pt-3'>
+                <span className='w-full'>{vulnData.name}</span>
+                <Tag variant='icon'><IconGraphFull /></Tag>
+                <Tag variant='low'>{vulnData.cve}</Tag>
+                <Tag variant='low'>{vulnData.cwe}</Tag>
+                <Tag variant='low'>{vulnData.type}</Tag>
             </td>
         );
     };
 
-    const renderStatusCell = (cell: Cell<VulnRecord, unknown>) => {
+    // Risk column cell renderer
+    const renderRiskCell = (cell: Cell<VulnRecord, unknown>) => {
+        const risk = cell.getContext().getValue() as 'info' | 'high' | 'medium' | 'low' | 'critical';
+
+        return (
+            <td key={cell.id}>
+                <Tag variant={risk}>{capitalizeFirstLetter(risk)}</Tag>
+            </td>
+        );
+    };
+
+    // Assets Effected column cell renderer
+    const renderAssetsEffectedCell = (cell: Cell<VulnRecord, unknown>) => {
         const value = cell.getContext().getValue() as string;
+
+        return (
+            <td key={cell.id} className='px-14'>
+                <Badge>{value}</Badge>
+            </td>
+        );
+    };
+
+    // Status column cell renderer
+    const renderStatusCell = (cell: Cell<VulnRecord, unknown>) => {
+        const value = cell.getContext().getValue() as string as 'jira-create' | 'jira-open' ;
         
         let statusLabel = 'Create Jira';
-        if (value === 'open') {
+        let icon = <IconExternalLink />;
+
+        if (value === 'jira-open') {
             statusLabel = 'Open Jira';
+            icon = <IconJira />;
         }
 
         return (
             <td key={cell.id}>
-                <Tag variant='standard'>{statusLabel}</Tag>
+                <Tag variant={value}>
+                    {icon} {statusLabel}
+                </Tag>
             </td>
         );
     };
 
+    // Renders the visible table cells
     const renderVisibleCells = (row: Row<VulnRecord>) => {
         return (
             row.getVisibleCells().map(cell => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const cellMap: any = {
                     'vulnData': renderVulnDataCell,
-                    'assetsEffected': renderCell,
+                    'assetsEffected': renderAssetsEffectedCell,
                     'risk': renderRiskCell,
                     'dateFound': renderCell,
                     'status': renderStatusCell
@@ -292,13 +320,14 @@ import { Tag } from './components/tag';
         )
     };
 
+    // State rendering the table
     const renderTable = () => {
         return (
             <div
                 className='container'
                 onScroll={e => fetchMoreOnBottomReached(e.target as HTMLDivElement)}
                 ref={tableContainerRef}>
-                <table>
+                <table className='brand table-fixed border-collapse border-spacing-0 w-full'>
                     <thead>
                         {renderTableHeaderGroups()}
                     </thead>
@@ -310,19 +339,19 @@ import { Tag } from './components/tag';
                         )}
                         {virtualRows.map(virtualRow => {
                             const row = rows[virtualRow.index] as Row<VulnRecord>;
+                            const selected = Object.keys(rowSelection).length && rowSelection[row.id];
+
+                            console.log('selected', selected);
+
+                            console.log('row', row);
+                            console.log('rowSelection', rowSelection);
                             
                             return (
-                                <motion.tr
+                                <tr
                                     key={row.id}
-                                    whileHover={{ backgroundColor: '#18181B' }}
-                                    transition={{
-                                        type: 'tween',
-                                        duration: 0.1
-                                    }}
-                                    // className={Object.keys(rowSelection).length ? 'bg-[#18181B]' : ''}
-                                >
+                                    className={selected ? 'bg-[#18181B]' : 'hover:bg-[#18181B] duration-200 transition-colors'}>
                                     {renderVisibleCells(row)}
-                                </motion.tr>
+                                </tr>
                             );
                         })}
                         {paddingBottom > 0 && (
@@ -336,17 +365,46 @@ import { Tag } from './components/tag';
         )
     }
 
+    // Renders the footer content area
     const renderFooterContent = () => {
+        const onClickHandler = () => {
+           setViewAllVulns(state => !state);
+        };
+
+
         return (    
-            <div>
-                Fetched {flatData.length} of {totalDBRowCount} Rows.
+            <div className='flex flex-col items-center'>
+                <LinkButton
+                    isDisabled={viewAllVulns}
+                    icon={<IconRightArrow isDisabled={viewAllVulns} />}
+                    onClick={onClickHandler}>
+                    View All Vulnerabilities
+                </LinkButton>
             </div>
         )
     }
     
+    // Renders the Header content area
     const renderHeaderContent = () => {
         return (
-            <div>Header Content</div>
+            <div className='flex items-center justify-center flex-nowrap h-[72px] px-8'>
+                <TabBar>
+                    <TabItem selected>
+                        Vulnerabilities
+                        <Badge>20</Badge>
+                    </TabItem>
+                    <TabItem>
+                        Assets
+                        <Badge disabled>20</Badge>
+                    </TabItem>
+                    <TabItem>
+                        Archive
+                        <Badge disabled>20</Badge>
+                    </TabItem>
+                </TabBar>
+                <span className='whitespace-nowrap mr-2'>Fetched {flatData.length} of {totalDBRowCount} Rows</span>
+                <FilterButton>Filters <IconFilter /></FilterButton>
+            </div>
         )
     }
 
@@ -354,7 +412,7 @@ import { Tag } from './components/tag';
         <div className='app'>
             <PageDetailTemplate
                 headerContent={renderHeaderContent()}
-                bodyContent={renderTable()}
+                bodyContent={isLoading ? <div className='flex items-center justify-center'>Loading...</div> : renderTable()}
                 footerContent={renderFooterContent()} />
         </div>
     )

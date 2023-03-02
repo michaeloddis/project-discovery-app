@@ -14,11 +14,11 @@ export type VulnRecord = {
   vulnData: VulnData;
   risk: 'low' | 'medium' | 'high' | 'critical'
   assetsEffected: number
-  status: 'create' | 'open'
-  dateFound: Date
+  status: 'jira-create' | 'jira-open'
+  dateFound: string
 }
 
-export type PersonApiResponse = {
+export type VulnDataApiResponse = {
     data: VulnRecord[]
      meta: {
         totalRowCount: number
@@ -37,23 +37,38 @@ const newVuln = (index: number): VulnRecord => {
     return {
         id: index + 1,
         vulnData: {
-            name: 'Cisco Small Business RV Series - OS Command Injection',
+            name: faker.helpers.shuffle<VulnData['name']>([
+                'Cisco Small Business RV Series - OS Command Injection',
+                'PhpMyAdmin <4.8.2 - Local File Inclusion',
+                'Sophos UTM Preauth - Remote Code Execution',
+                'Citrix ShareFile StorageZones <=5.10.x - Arbitrary File Read',
+                'Microsoft Exchange Server SSRF Vulnerability',
+                'GitLab CE/EE - Import RCE',
+                'phpMyAdmin < 5.1.2 - Cross-Site Scripting'
+            ])[0]!,
             cve: 'CVE-2021-1472',
             cwe: 'CWE-287',
             type: 'Remote Code Execution'
         },
         assetsEffected: faker.datatype.number(40),
-        dateFound: faker.datatype.datetime({ max: new Date().getTime() }),
+        // dateFound: faker.datatype.datetime({ max: new Date().getTime() }),
+        dateFound: faker.helpers.shuffle<VulnRecord['dateFound']>([
+            '4 hrs ago',
+            '1 month ago',
+            '6 months ago',
+            '10 minutes ago',
+            '20 minutes ago'
+        ])[0]!,
         status: faker.helpers.shuffle<VulnRecord['status']>([
-            'create',
-            'open'
+            'jira-create',
+            'jira-open'
         ])[0]!,
         risk: faker.helpers.shuffle<VulnRecord['risk']>([
             'low',
             'medium',
             'high',
             'critical'
-        ])[0]!,
+        ])[0]!
     }
 }
 
@@ -71,13 +86,14 @@ export function makeData(...lens: number[]) {
     return makeDataLevel()
 }
 
-const data = makeData(1000)
+const data = makeData(1000);
 
-//simulates a backend api
+// Simulates a backend api
 export const fetchData = (
     start: number,
     size: number,
-    sorting: SortingState
+    sorting: SortingState,
+    initialSize: number | null
 ) => {
     const dbData = [...data]
     if (sorting.length) {
@@ -93,8 +109,13 @@ export const fetchData = (
         })
     }
 
+    let end = start + size;
+    if (initialSize) {
+        end = initialSize;
+    }
+
     return {
-        data: dbData.slice(start, start + size),
+        data: dbData.slice(start, end),
         meta: {
             totalRowCount: dbData.length,
         },

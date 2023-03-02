@@ -20,12 +20,12 @@ body {
     align-items: center;
 }
 
+/* NOTE: I implemented some CSS here for speed since I am just learning tailwind. */
+
+/* Table */
+
 table {
-    border-collapse: collapse;
-    border-spacing: 0;
-    font-family: arial, sans-serif;
-    table-layout: fixed;
-    width: 100%;
+    /* font-family: 'Inter', sans-serif; */
 }
 
 thead {
@@ -43,13 +43,16 @@ th {
     height: 48px;
 }
 
+th.header-assetsEffected {
+    text-align: center;
+}
+
 tbody > tr {
     height: 80px;
     border: 1px solid #1E1E1E;
 }
 
 tbody > tr:hover {
-    /* background-color: #18181B; */
     border: 1px solid #27272A;
     border-radius: 4px;
 }
@@ -60,15 +63,15 @@ td:first-child { border-bottom-left-radius: 10px; }
 td:last-child { border-bottom-right-radius: 10px; }
 
 .container {
-    border: 1px solid #27272A;
-    height: calc(80px * 7 + 48px);
+    height: calc(80px * 7 + 58px);
     max-width: 1120px !important;
     overflow: auto;
 }
 
 /* Page Detail Layout */
 
-.page-detail-template_root {  display: grid;
+.page-detail-template_root {
+    display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: minmax(72px, auto) 1fr;
     grid-auto-columns: 1fr;
@@ -78,6 +81,10 @@ td:last-child { border-bottom-right-radius: 10px; }
         "Header"
         "Body"
         "Footer";
+
+    width: 1120px;
+    border: 1px solid #27272A;
+    margin-top: 24px;;
 }
   
 .page-detail-template_header {
