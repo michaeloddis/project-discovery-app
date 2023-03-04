@@ -4,3 +4,5 @@ export { IconJira } from './icon-jira';
 export { IconFilter } from './icon-filter';
 export { IconRightArrow } from './icon-right-arrow';
 export { IconGraphFull } from './icon-graph-full';
+export { IconCheckmark } from './icon-checkmark';
+export { IconIntermediateCheckmark } from './icon-intermediate';

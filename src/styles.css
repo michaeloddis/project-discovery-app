@@ -14,26 +14,9 @@ body {
     font-size: 12px;
 }
 
-.app {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
 /* NOTE: I implemented some CSS here for speed since I am just learning tailwind. */
 
 /* Table */
-
-table {
-    /* font-family: 'Inter', sans-serif; */
-}
-
-thead {
-    background-color: #1E1E1E;
-    margin: 0;
-    position: sticky;
-    top: 0;
-}
   
 th {
     border-bottom: 1px solid #000000;

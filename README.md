@@ -26,7 +26,6 @@ Visit the [Nx Documentation](https://nx.dev) to learn more.
 
 ## Assumptions and Decisions
 - Tabs were not fully implemented since the design in Figma did not show all the expected functionality. I did not want to assume expected functionality.
-- I did not have enough time to style the check. I wanted to get the functionality in place and ran out of time.
 - The color of the app displayed in prototype mode is different than the color shown in the design. I went with the colors in the design for the most parts. I was able to get some of the colors by looking at the components directly.
 - The icon in the design for the "Open Jira" tag was not exporting correctly, so I used the icon from the main badge component in Figma. Some colors did not match either, so again I used the colors from the main badge component seen in Figma. I would have had a conversation with the designer if was on the team before making these decisions :).
 - I assumed the Filters did not have to be fully implemented. Just styled.
