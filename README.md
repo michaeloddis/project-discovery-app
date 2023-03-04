@@ -25,12 +25,11 @@ Run `npx nx graph` to see a diagram of the dependencies of the projects.
 Visit the [Nx Documentation](https://nx.dev) to learn more.
 
 ## Assumptions and Decisions
-- I wasted a few hours on trying to CodeSandbox configured with Tailwind but had no luck. So, I decided to us Nx and deploy my source code to my GitHib Repository.
-- Tabs were not fully implemented since the design in Figma did not show all the expected functionality. I did want to assume expected functionality.
+- Tabs were not fully implemented since the design in Figma did not show all the expected functionality. I did not want to assume expected functionality.
 - I did not have enough time to style the check. I wanted to get the functionality in place and ran out of time.
-- The color of the app displayed in prototype mode is different that the color shown in the design. I went the designs colors for the most parts. I was able to get some of the colors by looking at the components directly.
-- The icon in the design for the "Open Jira" tag was not exporting correctly, so I used the icon from the main components. Some colors did not match other so again I used the colors from the main components seen in Figma. Obviously I would have a conversation with the designer I was on the team before making these decisions :).
-- I assumed the filter did not have to be fully implemented. Just styled trigger.
+- The color of the app displayed in prototype mode is different than the color shown in the design. I went with the colors in the design for the most parts. I was able to get some of the colors by looking at the components directly.
+- The icon in the design for the "Open Jira" tag was not exporting correctly, so I used the icon from the main badge component in Figma. Some colors did not match either, so again I used the colors from the main badge component seen in Figma. I would have had a conversation with the designer if was on the team before making these decisions :).
+- I assumed the Filters did not have to be fully implemented. Just styled.
 
 ### Libraries and Fonts Utilized
 - Google Fonts: Inter
