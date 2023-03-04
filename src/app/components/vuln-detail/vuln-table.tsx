@@ -285,7 +285,7 @@ export const VulnTable = ({
                 return (
                     <tr
                         key={row.id}
-                        className={selected ? 'bg-[#18181B]' : 'hover:bg-[#18181B] duration-200 transition-colors'}>
+                        className={selected ? 'bg-[#18181B] sm:h-36 md:h-28 lg:h-[80px]' : 'hover:bg-[#18181B] duration-200 transition-colors sm:h-36 md:h-28 lg:h-[80px]'}>
                         {renderVisibleCells(row)}
                     </tr>
                 );

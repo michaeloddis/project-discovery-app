@@ -26,6 +26,7 @@ export const Checkbox = ({
     return (
         <label>
             <div
+                tabIndex={0}
                 className={`h-4 w-4 rounded flex items-center justify-center border ${determineCheckmarkStyle}`}>
                 {rest.checked ? <IconCheckmark /> : indeterminate ? <IconIntermediateCheckmark /> : null}
             </div>
