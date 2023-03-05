@@ -15,7 +15,7 @@ export const VulnDataCell = ({
     return (
         <td 
             key={cell.id}
-            className='flex flex-wrap gap-2 content-center items-center pt-4 pb-4'>
+            className='flex flex-wrap gap-2 content-center items-center pt-[14px] pb-4'>
             <span className='w-full'>{vulnData.name}</span>
             <Tag variant='icon'><IconGraphFull /></Tag>
             <Tag variant='low'>{vulnData.cve}</Tag>
