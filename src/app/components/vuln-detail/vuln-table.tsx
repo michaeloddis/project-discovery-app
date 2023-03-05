@@ -276,6 +276,7 @@ export const VulnTable = ({
         }
     };
 
+    // sm:h-36 md:h-28 lg:h-[80px]
     const renderTableBodyContent = () => {
         return (
             virtualRows.map(virtualRow => {
@@ -285,7 +286,7 @@ export const VulnTable = ({
                 return (
                     <tr
                         key={row.id}
-                        className={selected ? 'bg-[#18181B] sm:h-36 md:h-28 lg:h-[80px]' : 'hover:bg-[#18181B] duration-200 transition-colors sm:h-36 md:h-28 lg:h-[80px]'}>
+                        className={selected ? 'bg-[#18181B] h-20' : 'hover:bg-[#18181B] duration-200 transition-colors h-20'}>
                         {renderVisibleCells(row)}
                     </tr>
                 );
