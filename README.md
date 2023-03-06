@@ -6,7 +6,7 @@ Assessment for ProjectDiscovery.io using Nx, React, TypeScript and Tailwind. The
 
 ## What I learned in this project
 
-This was my first time using TanStack Table (https://tanstack.com/table/v8), ReactQuery, ReactVirtual and TailwindCSS. I am sure there are some better ways to do some things with these tools. I like what I was able to in a short time frame.
+This was my first time using TanStack Table (https://tanstack.com/table/v8), ReactQuery, ReactVirtual and TailwindCSS. I am sure there are some better ways to do some things with these tools. I like what I was able to do in a short time frame.
 
 ## Development server
 
