@@ -4,7 +4,7 @@
 
 Assessment for ProjectDiscovery.io using Nx, React, TypeScript and Tailwind. There is dependency in Nx, so if you are prompted to install Nx CLI please do so using docs from [Nx Documentation](https://nx.dev).
 
-## What I Learned in this Project
+## What I learned in this project
 
 This was my first time using TanStack Table (https://tanstack.com/table/v8), ReactQuery, ReactVirtual and TailwindCSS. I am sure there are some better ways to do some things with these tools. I like what I was able to in a short time frame.
 
