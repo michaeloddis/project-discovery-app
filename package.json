@@ -7,7 +7,7 @@
     "build": "nx build",
     "test": "nx test"
   },
-  "private": true,
+  "private": false,
   "devDependencies": {
     "@nrwl/cypress": "^15.7.2",
     "@nrwl/eslint-plugin-nx": "15.7.2",
